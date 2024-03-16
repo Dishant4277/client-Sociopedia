@@ -22,9 +22,23 @@ const persistConfig = { key: "root", storage, version: 1 };
 const persistedReducer = persistReducer(persistConfig, authReducer);
 const store = configureStore({
   reducer: persistedReducer,
+  /**
+   * Prevents the store from throwing an error when it tries to
+   * rehydrate the state from localStorage. The actions that cause this
+   * error are not relevant to our application, so we can safely ignore
+   * them.
+   *
+   * See: https://redux-toolkit.js.org/api/getDefaultMiddleware#customizing-the-generated-middleware
+   */
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
+        /**
+         * A list of actions to ignore when checking if the state is serializable.
+         *
+         * These actions are not relevant to our application and can be safely
+         * ignored.
+         */
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }),
